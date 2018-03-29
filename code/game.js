@@ -2,7 +2,7 @@
 var actorChars = {
   "@": Player,
   "o": Coin, // A coin will wobble up and down
-  "p": Pup  // Power up
+  "f": Floater  // It should wobble side to side
 };
 
 function Level(plan) {
@@ -84,13 +84,13 @@ function Coin(pos) {
 }
 Coin.prototype.type = "coin";
 
-function Pup(pos) {
+function Floater(pos) {
   this.basePos = this.pos = pos.plus(new Vector(0.2, 0.2));
   this.size = new Vector(0.7, 0.7);
   // Make it go back and forth in a sine wave.
   this.wobble = Math.random() * Math.PI * 2;
 }
-Pup.prototype.type = "pup";
+Floater.prototype.type = "floater";
 
 // Helper function to easily create an element of a type provided
 // and assign it a class.
@@ -255,10 +255,10 @@ Coin.prototype.act = function(step) {
   this.pos = this.basePos.plus(new Vector(0, wobblePos));
 };
 
-Pup.prototype.act = function(step) {
+Floater.prototype.act = function(step) {
   this.wobble += step * wobbleSpeed;
   var wobblePos = Math.sin(this.wobble) * wobbleDist;
-  this.pos = this.basePos.plus(new Vector(0, wobblePos));
+  this.pos = this.basePos.plus(new Vector(wobblePos, 0));
 };
 
 var maxStep = 0.05;
@@ -312,7 +312,7 @@ Player.prototype.act = function(step, level, keys) {
 };
 
 Level.prototype.playerTouched = function(type, actor) {
-  if (type == "coin"  ||  type == "pup") {
+  if (type == "coin"  ||  type == "floater") {
     this.actors = this.actors.filter(function(other) {
       return other != actor;
     });
